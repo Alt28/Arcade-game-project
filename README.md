@@ -1,6 +1,7 @@
 run file using masm 
 
-ex:
+Ex:
+
 masm Gameplay.asm
 
 link Gameplay.obj
