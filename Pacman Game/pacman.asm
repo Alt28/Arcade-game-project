@@ -1,13 +1,12 @@
-;	Pacman Assembly 8086 Project 2008
-;	Done By : Mohammad Na'em Khatib - @mkhatib7
+;	Pacman Assembly 8086
 .Model 	Small
 .Stack 1000
 .Data
 ;=====================================================================================================
 ;=					Program Variables , Very Easy Configuration							=
 ;=====================================================================================================
-; Speed Of The Game  ( Change This if it's too slow decrease it , else if it's too fast increase it )
-	;speed dw 12000   	; this was for the earlier delay that depends on the computer ( not recomended ) . i replaced it with the new one, which depends only on the system clock !
+; Speed Of The Game  
+	;speed dw 12000   	; 
 	pacmanSpeed db 10
 ; The Score at which the user WINS !
 	finalScore db 30 ; 30 dots to win ;)
@@ -25,19 +24,19 @@
 	dot db 3h ; '.'
 	mine db 15
 
-; For Timer ; this is like flags for timer to be working on... don't play with them
+; For Timer ; 
 	t1 db 0
 	t2 db 0
 	td db 0
 ; Strings To Be Displayed for the user
-	helpTitle db "Help"
-	help1 db "1.Use Arrows To Move",0
+	helpTitle db ""
+	help1 db "",0
 	help1Len dw 21
-	help2 db "2.Point for Each Dot",0
+	help2 db "",0
 	help2Len dw 21
-	help3 db "3.'r' Repeate Game.",0
+	help3 db "",0
 	help3Len dw 19
-	help4 db "4.ESC to Exit",0
+	help4 db "",0
 	help4Len dw 14
 	scoreMsg db "Score  0000",0
 	scoreMsgLen dw 11
@@ -46,7 +45,7 @@
 	timeMsgLen dw 12
 	exitMsg db "      Thanks For Playing!",10,13
 	exitMsgLen dw 27
-	doneByMsg db "Sayonara ",1h,10,13,10,13,10,13,10,13,10,13,10,13,10,13,10,13,10,13,10,13,10,13,10,13,10,13
+	doneByMsg db "By Group 4 ",1h,10,13,10,13,10,13,10,13,10,13,10,13,10,13,10,13,10,13,10,13,10,13,10,13,10,13
 	doneByMsgLen dw 55
 	levelCompleteMsg db "!!! CONGRATULATIONS !!!"
 	levelCompleteMsgLen dw 23
@@ -136,7 +135,7 @@
 	int     10h
 ;wait Any Key
     CALL cls 				; clear the screen
-	CALL buildHelpArea 		;  Help Area
+	
 	call buildInitialScreen
 
 	mov ah, 00h
@@ -149,10 +148,7 @@
         CALL cls 				; clear the screen
 		CALL buildBoard  		; Main Area & Border
 		call putBlocks			; Blocks
-		CALL buildScoreArea 	; Score Area
-		CALL buildLivesArea 	;  Help Area
-		CALL buildTimeArea 		; Timer Area
-		CALL buildHelpArea 		;  Help Area
+		
 		call fillBoard			; Put Dots
 		call putMines			; Mines ( BOMBS)
 		CALL putPacMan			; pica at last :)
@@ -302,16 +298,7 @@ proc putBlocks
 		JNE @@putBlocks
 	ret
 endp
-;====================================================================================================
-;====================================		Wait Action  	==========================================
-proc waitActionToMove
-@@waitAction:
-		call incTimer
-		MOV AH,06h
-		MOV DL,0FFh
-		INT 21h
-		ret
-waitActionToMove endp
+
 ;====================================================================================================
 ;====================================		Move Right  	==========================================
 Proc moveRight
@@ -319,12 +306,11 @@ Proc moveRight
 		call canMoveRight? ; Check if u can move right returns 1 in dx if false
 		cmp dx,1
 		JE @@dontMoveRight
-		CALL pmRemove	; clear the current position for the pacman
 		INC bmLocX		; increment it's x position
 		CALL search		; search if the new position is a DOT position OR a MINE position and increment the score if dot , or decrement lives if mine
 		CALL putPacMan	; print the pacman in the new position
 		call delay		; for slowing the pacman motion
-		CALL incTimer	; increment timer depending on the timer flags if set then it will be incremented by one
+		
 		MOV AH,06h		; seek for an input
 		MOV DL,0FFh
 		INT 21h
@@ -332,7 +318,6 @@ Proc moveRight
 		cmp al,quit		; if pressed the quit button .. Exit
 		je @@exitRight
 @@dontMoveRight:
-		call waitActionToMove ; ask for an input
 @@return1:
 		RET
 @@exitRight:
@@ -380,12 +365,11 @@ Proc moveLeft
 		call canMoveLeft?
 		cmp dx,1
 		je @@dontMoveLeft
-		CALL pmRemove
+		
 		DEC bmLocX
 		CALL search
 		CALL putPacMan
 		CALL delay
-		CALL incTimer
 		MOV AH,06h
 		MOV DL,0FFh
 		INT 21h
@@ -393,7 +377,7 @@ Proc moveLeft
 		cmp al,quit
 		je @@exitLeft
 @@dontMoveLeft:
-	call waitActionToMove
+	
 @@return2:
 		RET
 @@exitLeft:
@@ -441,12 +425,11 @@ Proc moveUp
 		call canMoveUp?
 		cmp dx,1
 		je @@dontMoveUp
-		CALL pmRemove
+		
 		DEC bmLocY
 		CALL search
 		CALL putPacMan
 		CALL delay
-		CALL incTimer
 		MOV AH,06h
 		MOV DL,0FFh
 		INT 21h
@@ -454,7 +437,7 @@ Proc moveUp
 		cmp al,quit
 		je @@exitUp
 @@dontMoveUp:
-	call waitActionToMove
+	
 @@return3:
 		RET
 @@exitUp:
@@ -501,12 +484,11 @@ Proc moveDown
 		call canMoveDown?
 		cmp dx,1
 		je @@dontMoveDown
-		CALL pmRemove
+		
 		INC bmLocY
 		CALL search
 		CALL putPacMan
 		call delay
-		CALL incTimer
 		MOV AH,06h
 		MOV DL,0FFh
 		INT 21h
@@ -514,7 +496,7 @@ Proc moveDown
 		cmp al,quit
 		je @@exitDown
 @@dontMoveDown:
-	call waitActionToMove
+	
 @@return:
 		RET
 @@exitDown:
@@ -604,7 +586,7 @@ Proc changeDirection
 	jmp begining
 	ret
 @@stillTheFirstMove:
-	call waitActionToMove
+	
 	jmp @@WAIT
 @@changeToLeft:
 	MOV currentDirection,AL
@@ -677,121 +659,18 @@ Proc search
 	JMP @@doNth ; if nothing has been found
 	@@eatDot:
 		MOV [level1Positions+DI],0
-		CALL incScore
+		
 		ret
 	@@eatMine:
 		MOV [level1Mines+DI],0
-		CALL decLives
+		
 	@@doNth:
 		RET
 	RET
 search EndP
-;====================================================================================================
-;=========================================	Score 	=============================================
-Proc incScore
-	MOV DI,4
-@@incProcess:
-	DEC DI
-	CMP [score+DI],'9'
-	JE @@zeroCurrent
-	JMP @@incCurrent
-@@zeroCurrent:
-	MOV [score+DI],'0'
-	JMP @@incProcess
-@@incCurrent:
-	INC [score+DI]
-	MOV BX, scoreAreaBeginingXY
-	add bx,0108h
-	CALL setXY
-	MOV DX, offset score
-	MOV CX, 4
-	CALL printLine
-	inc scoreInteger
-	mov dh,finalScore
-	cmp scoreInteger,dh
-	je @@levelComplete
-	RET
-@@levelComplete:
-	call levelComplete
-	;mov finishFlag,1
-	RET
-incScore EndP
-;====================================================================================================
-;=========================================	Lives	===============================================
-Proc decLives
-	dec lives
-	cmp lives,48 	; if lives is zero game is over
-	je @@gameOver
-	call initialize
-	jmp begining	; repeate the game
-@@gameOver:
-	call gameOver
-	RET
-decLives EndP
-;====================================================================================================
-;=========================================	Timer	 ===============================================
-Proc incTimer
-	cmp finishFlag,1 	; if the game is already finished
-	je @@finishFlag		; go and exit the game
-working:
-	call oneSecond		; is it one second passed yet
-	cmp td,1			; it will be if td is set to one
-	jne @@dontIncrement1	; if not , don't increment .. if yes , increment timer
-	MOV BX, 0508h
-	CALL setXY
-	MOV DI,4
-@@incProcess2:
-	DEC DI
-	CMP DI,2
-	JE @@CMP6
-	CMP DI,0
-	JE @@CMP6
-@@CMP9:
-	CMP [time+DI],'9'
-	JE 	@@zeroCurrent2
-	JMP @@incCurrent2
-	JMP @@cont
-@@CMP6:
-	CMP [time+DI],'5'
-	JE @@zeroCurrent2
-	JMP @@incCurrent2
-@@cont:
-@@zeroCurrent2:
-	MOV [time+DI],'0'
-	JMP @@incProcess2
-@@incCurrent2:
-	CALL oneSecond
-	INC [time+DI]
-	MOV BX, timeAreaBeginingXY
-	add bx, 0108h
-	CALL setXY
-	MOV DX, offset time
-	MOV CX, 2
-	CALL printLine
-	MOV DX , offset timeSeperater
-	MOV CX, 1
-	CALL printLine
-	MOV DX, offset [time+2]
-	MOV CX, 2
-	CALL printLine
-@@dontIncrement1:
-	RET
-@@finishFlag:
-	mov ah,4ch
-	int 21h
-ret
-incTimer EndP
-;====================================================================================================
-;=========================================	Remove Pacman  ===========================================
-Proc pmRemove
-	MOV BH,bmLocY
-	MOV BL,bmLocX
-	CALL setXY
-	MOV AH,06h
-	MOV DL,' '	; print a space to clear the pacman previous position
-	INT 21h
-	RET
-pmRemove EndP
+
+
+
 ;====================================================================================================
 ;=========================================	Build Board	 ===============================================
 Proc buildBoard
@@ -958,105 +837,10 @@ proc gameOver
 	ret
 gameOver endp
 ;========================================================================================================
-;==========================================Help Area=======================================================
-Proc buildHelpArea
-	MOV AH,06H
-	MOV AL,00H
-	MOV BH,helpAreaColor
-	MOV CX,helpAreaBeginingXY
-	MOV DX,helpAreaEndingXY
-	INT 10H
-	MOV BX,helpAreaBeginingXY
-	add bx, 0101h
-	CALL setXY
 
-	MOV DX, offset helpTitle
-	MOV CX, 4
-	CALL printLine
-	ADD BH,2
-	CALL setXY
-	MOV DX, offset help1
-	MOV CX, help1Len
-	CALL printLine
-	ADD BH,1
-	CALL setXY
-	MOV DX, offset help2
-	MOV CX, help2Len
-	CALL printLine
-	ADD BH,1
-	CALL setXY
-	MOV DX, offset help3
-	MOV CX, help3Len
-	CALL printLine
-	ADD BH,1
-	CALL setXY
-	MOV DX, offset help4
-	MOV CX, help4Len
-	CALL printLine
-	RET
-buildHelpArea EndP
 ;========================================================================================================
 ;========================================== 	Score Area 	=========================================
-Proc buildScoreArea
-	MOV AH,06H
-	MOV AL,00H
-	MOV BH,4FH
-	MOV CX,scoreAreaBeginingXY
-	MOV DX,scoreAreaEndingXY
-	INT 10H
-	MOV BX, cx
-	add bx,0101h
-	CALL setXY
 
-	MOV DX, offset scoreMsg
-	MOV CX, scoreMsgLen
-	CALL printLine
-	RET
-buildScoreArea EndP
-;========================================================================================================
-;========================================== 	Lives Area 	=========================================
-Proc buildLivesArea
-	MOV AH,06H
-	MOV AL,00H
-	MOV BH,3EH
-	MOV CX,livesAreaBeginingXY
-	MOV DX,livesAreaEndingXY
-	INT 10H
-	MOV BX, cx
-	add bx,0101h
-	CALL setXY
-	MOV DX, offset livesMsg
-	MOV CX, livesMsgLen
-	CALL printLine
-	mov ax,48
-@@putLivesFaces:
-	inc ax
-	mov dx, offset  pacmanFace
-	mov cx,1
-	push ax
-	CALL printLine
-	pop ax
-	cmp al,lives
-	jl @@putLivesFaces
-	RET
-buildLivesArea EndP
-;=================================================================================================
-;========================================== 	Time Area   	=========================================
-Proc buildTimeArea
-	MOV AH,06H
-	MOV AL,00H
-	MOV BH,5FH
-	MOV CX,timeAreaBeginingXY
-	MOV DX,timeAreaEndingXY
-	INT 10H
-	MOV BX, cx
-	add bx,0101h
-	CALL setXY
-	MOV DX, offset timeMsg
-	MOV CX, timeMsgLen
-	CALL printLine
-	RET
-buildTimeArea EndP
 ;========================================================================================================
 ;========================================== 	     The OldDelay 		=====================================
 ; delay22 Proc
