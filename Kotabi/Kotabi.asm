@@ -5,7 +5,7 @@
 .Stack 1000
 .Data
 ;=====================================================================================================
-;=					Program Variables , Very Easy Configuration							=
+;=					Program Variables , 							=
 ;=====================================================================================================
 ; Speed Of The Game  ( use to Change This if it's too slow decrease it , else if it's too fast increase it )
 	;speed dw 12000   	; this was for the earlier delay that depends on the computer ( not recomended ) . i replaced it with the new one, which depends only on the system clock !
@@ -51,7 +51,7 @@
 	exitMsg2Len dw 27
 	doneByMsg db "By Group 4 ",1h,10,13,10,13,10,13,10,13,10,13,10,13,10,13,10,13,10,13,10,13,10,13,10,13,10,13
 	doneByMsgLen dw 55
-	doneByMsg2 db "KOTABI ",1h,10,13,10,13,10,13,10,13,10,13,10,13,10,13,10,13,10,13,10,13,10,13,10,13,10,13
+	doneByMsg2 db "             KOTABI ",1h,10,13,10,13,10,13,10,13,10,13,10,13,10,13,10,13,10,13,10,13,10,13,10,13,10,13
 	doneByMsg2Len dw 55
 	levelCompleteMsg db "!!! CONGRATULATIONS !!!"
 	levelCompleteMsgLen dw 23
@@ -107,8 +107,8 @@
 	minesColor db 0Ch ; Red
 	grase db 176 ; The Green Grase
 	graseL dw 1
-	graseColor db 06h ; dark yellow green
-	borderColor db 10h ; Yellow
+	graseColor db 02h ; dark yellow green
+	borderColor db 0E0h ; Yellow
 
 	helpAreaColor db 08FH
 	boardBeginingXY dw 0118H
