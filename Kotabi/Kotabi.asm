@@ -1,4 +1,6 @@
-;	Pacman Assembly 8086
+;	Kotabi Assembly 8086
+;Kotabi = kokoro(heart) + taberu(eat)
+
 .Model 	Small
 .Stack 1000
 .Data
@@ -332,7 +334,7 @@ Proc moveRight
 		CALL pmRemove	; clear the current position for the pacman
 		INC bmLocX		; increment it's x position
 		CALL search		; search if the new position is a DOT position OR a MINE position and increment the score if dot , or decrement lives if mine
-		CALL putKotabi	; print the pacman in the new position
+		CALL putKotabi	; print the Kotabi in the new position
 		call delay		; for slowing the pacman motion
 		CALL incTimer	; increment timer depending on the timer flags if set then it will be incremented by one
 		MOV AH,06h		; seek for an input
@@ -576,7 +578,7 @@ proc initialize
 	cmp di, 4
 	jne @@zeroScore
 	mov scoreInteger,0		; zero the score integer
-	mov dl,initialbmLocY 	; return the pacman to it's inital position
+	mov dl,initialbmLocY 	; return the Kotabi to it's inital position
 	mov dh,initialbmLocX
 	mov bmLocY,dl
 	mov bmLocX,dh
@@ -654,7 +656,7 @@ Proc putKotabi
 	MOV AH,06H
 	MOV AL,00H
 	MOV BH,KotabiColor
-	mov ch,bmLocY	; put the pacman on it's position
+	mov ch,bmLocY	; put the Kotabi on it's position
 	mov dh,bmLocY
 	mov cl,bmLocX
 	mov dl,bmLocX
@@ -798,7 +800,7 @@ Proc pmRemove
 	MOV BL,bmLocX
 	CALL setXY
 	MOV AH,06h
-	MOV DL,' '	; print a space to clear the pacman previous position
+	MOV DL,' '	; print a space to clear the Kotabi previous position
 	INT 21h
 	RET
 pmRemove EndP
